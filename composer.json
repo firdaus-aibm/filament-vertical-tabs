@@ -1,0 +1,37 @@
+{
+    "name": "afs19/filament-vertical-tabs",
+    "description": "A Filament v3 package that adds vertical tabs functionality",
+    "type": "library",
+    "require": {
+        "php": "^8.1",
+        "laravel/framework": "^11.0",
+        "filament/filament": "^3.0"
+    },
+    "keywords": [
+        "laravel",
+        "filament",
+        "tabs",
+        "vertical"
+    ],
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Afs19\\FilamentVerticalTabs\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Afs19\\FilamentVerticalTabs\\FilamentVerticalTabsServiceProvider"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "AFS19",
+            "email": "iireco20@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
