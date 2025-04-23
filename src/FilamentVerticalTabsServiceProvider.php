@@ -2,7 +2,8 @@
 
 namespace Afs19\FilamentVerticalTabs;
 
-use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs as FormTabs;
+use Filament\Infolists\Components\Tabs as InfolistTabs;
 use Illuminate\Support\ServiceProvider;
 
 class FilamentVerticalTabsServiceProvider extends ServiceProvider
@@ -12,18 +13,30 @@ class FilamentVerticalTabsServiceProvider extends ServiceProvider
         // Load views
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'filament-vertical-tabs');
         
-        // Make views publishable
+        // Publish views
         $this->publishes([
             __DIR__ . '/../resources/views' => resource_path('views/vendor/filament-vertical-tabs'),
         ], 'filament-vertical-tabs-views');
 
-        // Register the macro
-        Tabs::macro('vertical', function (bool $isVertical = true) {
+        // Register macro for Form Tabs
+        FormTabs::macro('vertical', function (bool $isVertical = true) {
             $this->viewData([
                 'isVertical' => $isVertical,
             ]);
 
-            // override the view only if vertical
+            if ($isVertical) {
+                $this->view('filament-vertical-tabs::vertical-tabs');
+            }
+
+            return $this;
+        });
+
+        // Register macro for Infolist Tabs
+        InfolistTabs::macro('vertical', function (bool $isVertical = true) {
+            $this->viewData([
+                'isVertical' => $isVertical,
+            ]);
+
             if ($isVertical) {
                 $this->view('filament-vertical-tabs::vertical-tabs');
             }
