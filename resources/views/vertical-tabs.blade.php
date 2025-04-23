@@ -7,7 +7,7 @@
 
         init() {
             // Get all tab IDs and store them
-            this.tabs = Array.from(this.$el.querySelectorAll('[data-tab-id]')).map(el => el.dataset.tabId);
+            this.tabs = @js($getChildComponentContainer()->getComponents()->pluck('id')->toArray());
 
             // Set initial index
             this.currentIndex = this.tabs.indexOf(this.activeTab);
@@ -18,7 +18,7 @@
             });
 
             // Watch for screen resize and close mobile nav on larger screens
-            this.$watch('$store.windowWidth', (width) => {
+            this.$watch('$store.windowWidth || window.innerWidth', (width) => {
                 if (width >= 1024) this.isMobileNavOpen = false;
             });
 
@@ -28,6 +28,21 @@
                     this.isMobileNavOpen = false;
                 }
             });
+
+            // Check if tabs are available
+            if (this.tabs.length === 0) {
+                console.warn('No tabs found.');
+                return;
+            }
+
+            // Build tabsMeta with label and icon from the DOM
+            const tabElements = Array.from(this.$el.querySelectorAll('[data-tab-id]'));
+
+            this.tabsMeta = tabElements.map(el => ({
+                id: el.dataset.tabId,
+                label: el.dataset.tabLabel,
+                iconHtml: el.querySelector('[data-tab-icon]')?.innerHTML || '',
+            }));
         },
 
         goToNextTab() {
@@ -56,10 +71,10 @@
     <!-- Mobile Hamburger Menu Button (visible on small screens) -->
     <div class="sticky top-0 z-20 lg:hidden mb-6 flex justify-between items-center bg-white dark:bg-gray-800 rounded-xl shadow-sm p-3">
         <div class="flex items-center gap-2 font-medium">
-            <template x-for="tab in $el.parentElement.querySelectorAll('[data-tab-id]')" :key="tab.dataset.tabId">
-                <div x-show="tab.dataset.tabId === activeTab" class="flex items-center gap-2" style="display: none;">
-                    <div x-html="tab.querySelector('[data-tab-icon]')?.innerHTML || ''" class="text-primary-500"></div>
-                    <span x-text="tab.dataset.tabLabel" class="text-gray-900 dark:text-white"></span>
+            <template x-for="tab in tabsMeta" :key="tab.id">
+                <div x-show="tab.id === activeTab" class="flex items-center gap-2" style="display: none;">
+                    <div x-html="tab.iconHtml" class="text-primary-500"></div>
+                    <span x-text="tab.label" class="text-gray-900 dark:text-white"></span>
                 </div>
             </template>
         </div>
@@ -142,7 +157,7 @@
                 @foreach ($getChildComponentContainer()->getComponents() as $tab)
                     <button
                             type="button"
-                            x-on:click="activeTab = '{{ $tab->getId() }}'; isMobileNavOpen = false"
+                            x-on:click="if (activeTab !== '{{ $tab->getId() }}') activeTab = '{{ $tab->getId() }}'; isMobileNavOpen = false"
                             class="w-full text-left px-4 py-3 my-1 flex items-center gap-3 text-sm transition rounded-lg"
                             :class="{
                             'bg-primary-50 dark:bg-primary-500/20 text-primary-600 dark:text-primary-400 font-medium': activeTab === '{{ $tab->getId() }}',
@@ -180,7 +195,7 @@
                         @foreach ($getChildComponentContainer()->getComponents() as $tab)
                             <button
                                     type="button"
-                                    x-on:click="activeTab = '{{ $tab->getId() }}'"
+                                    x-on:click="if (activeTab !== '{{ $tab->getId() }}') activeTab = '{{ $tab->getId() }}'"
                                     class="flex items-center gap-3 px-4 py-3 mx-2 my-0.5 rounded-lg text-sm transition relative"
                                     data-tab-id="{{ $tab->getId() }}"
                                     data-tab-label="{{ $tab->getLabel() }}"
@@ -248,7 +263,7 @@
                                     x-bind:disabled="!hasPrevTab()"
                                     class="p-1 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
                                     aria-label="Previous tab"
-                            >
+                            
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                                 </svg>
