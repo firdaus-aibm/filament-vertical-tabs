@@ -37,15 +37,19 @@
         });
 
         // Collect tab metadata from DOM
+        this.tabsMeta = [];
         const tabElements = Array.from(this.$el.querySelectorAll('[data-tab-id]'));
+    
+        this.tabsMeta = tabElements.map(el => {
+            const iconEl = el.querySelector('[data-tab-icon]');
+            return {
+                id: el.dataset.tabId,
+                label: el.dataset.tabLabel || '',
+                iconHtml: iconEl ? iconEl.innerHTML : ''
+            };
+        });
 
-        this.tabsMeta = tabElements.map(el => ({
-            id: el.dataset.tabId,
-            label: el.dataset.tabLabel ?? '',
-            iconHtml: el.querySelector('[data-tab-icon]')?.innerHTML ?? '',
-        }));
-
-        console.log('tabsMeta populated:', this.tabsMeta);
+        console.log('Initialized tabsMeta:', this.tabsMeta); // Debugging
     },
 
     goToNextTab() {
@@ -75,10 +79,14 @@
     <div class="sticky top-0 z-20 lg:hidden mb-6 flex justify-between items-center bg-white dark:bg-gray-800 rounded-xl shadow-sm p-3">
         <div class="flex items-center gap-2 font-medium">
             <div x-show="tabsMeta.length > 0" x-cloak>
-                <template x-for="(tab, index) in tabsMeta" :key="index">
-                    <div x-show="tab.id === activeTab" class="flex items-center gap-2">
-                        <div x-html="tab.iconHtml" class="text-primary-500"></div>
-                        <span x-text="tab.label" class="text-gray-900 dark:text-white"></span>
+                <template x-if="tabsMeta.length > 0">
+                    <div x-cloak>
+                        <template x-for="(tabItem, index) in tabsMeta" :key="index">
+                            <div x-show="tabItem.id === activeTab" class="flex items-center gap-2">
+                                <div x-html="tabItem.iconHtml" class="text-primary-500"></div>
+                                <span x-text="tabItem.label" class="text-gray-900 dark:text-white"></span>
+                            </div>
+                        </template>
                     </div>
                 </template>
             </div>
