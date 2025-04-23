@@ -1,70 +1,74 @@
 <div
-        x-data="{
-        activeTab: @js($getChildComponentContainer()->getComponents()[0]->getId()),
-        isMobileNavOpen: false,
-        tabs: [],
-        currentIndex: 0,
+    x-data="{
+    activeTab: @js($getChildComponentContainer()->getComponents()[0]->getId()),
+    isMobileNavOpen: false,
+    tabs: [],
+    tabsMeta: [],
+    currentIndex: 0,
 
-        init() {
-            // Get all tab IDs and store them
-            this.tabs = @js(collect($getChildComponentContainer()->getComponents())->pluck('id')->toArray());
+    init() {
+        // Initialize tab IDs
+        this.tabs = @js(collect($getChildComponentContainer()->getComponents())->pluck('id')->toArray());
 
-            // Set initial index
-            this.currentIndex = this.tabs.indexOf(this.activeTab);
-
-            // Watch for activeTab changes to update currentIndex
-            this.$watch('activeTab', (tabId) => {
-                this.currentIndex = this.tabs.indexOf(tabId);
-            });
-
-            // Watch for screen resize and close mobile nav on larger screens
-            this.$watch('$store.windowWidth || window.innerWidth', (width) => {
-                if (width >= 1024) this.isMobileNavOpen = false;
-            });
-
-            // Add ESC key listener to close mobile nav
-            window.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && this.isMobileNavOpen) {
-                    this.isMobileNavOpen = false;
-                }
-            });
-
-            // Check if tabs are available
-            if (this.tabs.length === 0) {
-                console.warn('No tabs found.');
-                return;
-            }
-
-            // Build tabsMeta with label and icon from the DOM
-            const tabElements = Array.from(this.$el.querySelectorAll('[data-tab-id]'));
-
-            this.tabsMeta = tabElements.map(el => ({
-                id: el.dataset.tabId,
-                label: el.dataset.tabLabel,
-                iconHtml: el.querySelector('[data-tab-icon]')?.innerHTML || '',
-            }));
-        },
-
-        goToNextTab() {
-            if (this.hasNextTab()) {
-                this.activeTab = this.tabs[this.currentIndex + 1];
-            }
-        },
-
-        goToPrevTab() {
-            if (this.hasPrevTab()) {
-                this.activeTab = this.tabs[this.currentIndex - 1];
-            }
-        },
-
-        hasPrevTab() {
-            return this.currentIndex > 0;
-        },
-
-        hasNextTab() {
-            return this.currentIndex < this.tabs.length - 1;
+        // Fallback if no tabs found
+        if (!this.tabs.length) {
+            console.warn('No tabs found.');
+            return;
         }
-    }"
+
+        // Set the initial current index
+        this.currentIndex = this.tabs.indexOf(this.activeTab);
+
+        // Watch for changes to activeTab and update index
+        this.$watch('activeTab', (tabId) => {
+            this.currentIndex = this.tabs.indexOf(tabId);
+        });
+
+        // Handle window resize for mobile nav behavior
+        this.$watch('$store.windowWidth || window.innerWidth', (width) => {
+            if (width >= 1024) {
+                this.isMobileNavOpen = false;
+            }
+        });
+
+        // Handle ESC key to close mobile nav
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.isMobileNavOpen) {
+                this.isMobileNavOpen = false;
+            }
+        });
+
+        // Collect tab metadata from DOM
+        const tabElements = Array.from(this.$el.querySelectorAll('[data-tab-id]'));
+
+        this.tabsMeta = tabElements.map(el => ({
+            id: el.dataset.tabId,
+            label: el.dataset.tabLabel ?? '',
+            iconHtml: el.querySelector('[data-tab-icon]')?.innerHTML ?? '',
+        }));
+    },
+
+    goToNextTab() {
+        if (this.hasNextTab()) {
+            this.activeTab = this.tabs[this.currentIndex + 1];
+        }
+    },
+
+    goToPrevTab() {
+        if (this.hasPrevTab()) {
+            this.activeTab = this.tabs[this.currentIndex - 1];
+        }
+    },
+
+    hasPrevTab() {
+        return this.currentIndex > 0;
+    },
+
+    hasNextTab() {
+        return this.currentIndex < this.tabs.length - 1;
+    }
+}"
+
         x-init="init()"
         class="filament-vertical-tabs relative"
 >
