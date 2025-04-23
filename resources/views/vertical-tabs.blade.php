@@ -44,6 +44,8 @@
             label: el.dataset.tabLabel ?? '',
             iconHtml: el.querySelector('[data-tab-icon]')?.innerHTML ?? '',
         }));
+
+        console.log('tabsMeta populated:', this.tabsMeta);
     },
 
     goToNextTab() {
