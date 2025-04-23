@@ -72,8 +72,8 @@
     <!-- Mobile Hamburger Menu Button (visible on small screens) -->
     <div class="sticky top-0 z-20 lg:hidden mb-6 flex justify-between items-center bg-white dark:bg-gray-800 rounded-xl shadow-sm p-3">
         <div class="flex items-center gap-2 font-medium">
-            <div x-show="tabs.length > 0" x-cloak>
-                <template x-for="tab in tabsMeta" :key="tab.id">
+            <div x-show="tabsMeta.length > 0" x-cloak>
+                <template x-for="(tab, index) in tabsMeta" :key="index">
                     <div x-show="tab.id === activeTab" class="flex items-center gap-2">
                         <div x-html="tab.iconHtml" class="text-primary-500"></div>
                         <span x-text="tab.label" class="text-gray-900 dark:text-white"></span>
