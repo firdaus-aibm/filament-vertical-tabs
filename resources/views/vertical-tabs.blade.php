@@ -171,9 +171,11 @@
         <div class="hidden lg:block w-64 shrink-0">
             <div class="pr-4 rtl:pr-0 rtl:pl-4 sticky top-4">
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-                    <h3 class="font-medium text-gray-900 dark:text-gray-100 p-4 border-b border-gray-200 dark:border-gray-700 text-sm">
-                        {{ $getLabel() ?? 'Navigation' }}
-                    </h3>
+                    @if ($getLabel() !== '')
+                        <h3 class="font-medium text-gray-900 dark:text-gray-100 p-4 border-b border-gray-200 dark:border-gray-700 text-sm">
+                            {{ $getLabel() }}
+                        </h3>
+                    @endif
                     <nav class="flex flex-col py-2">
                         @foreach ($getChildComponentContainer()->getComponents() as $tab)
                             <button
