@@ -7,7 +7,7 @@
 
         init() {
             // Get all tab IDs and store them
-            this.tabs = @js($getChildComponentContainer()->getComponents()->pluck('id')->toArray());
+            this.tabs = @js(collect($getChildComponentContainer()->getComponents())->pluck('id')->toArray());
 
             // Set initial index
             this.currentIndex = this.tabs.indexOf(this.activeTab);
