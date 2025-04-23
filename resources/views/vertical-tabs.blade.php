@@ -1,6 +1,6 @@
 <div
     x-data="{
-    activeTab: '',
+    activeTab: @js($getChildComponentContainer()->getComponents()[0]->getId()),
     isMobileNavOpen: false,
     tabs: [],
     tabsMeta: [],
@@ -15,8 +15,6 @@
             console.warn('No tabs found.');
             return;
         }
-
-        this.activeTab = this.tabs[0];
 
         // Set the initial current index
         this.currentIndex = this.tabs.indexOf(this.activeTab);
@@ -70,7 +68,7 @@
 }"
 
         x-init="init()"
-        class="filament-vertical-tabs relative" x-cloak>
+        class="filament-vertical-tabs relative">
     <!-- Mobile Hamburger Menu Button (visible on small screens) -->
     <div class="sticky top-0 z-20 lg:hidden mb-6 flex justify-between items-center bg-white dark:bg-gray-800 rounded-xl shadow-sm p-3">
         <div class="flex items-center gap-2 font-medium">
