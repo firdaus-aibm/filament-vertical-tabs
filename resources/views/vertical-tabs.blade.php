@@ -25,10 +25,8 @@
         });
 
         // Handle window resize for mobile nav behavior
-        this.$watch('$store.windowWidth || window.innerWidth', (width) => {
-            if (width >= 1024) {
-                this.isMobileNavOpen = false;
-            }
+        window.addEventListener('resize', () => {
+            this.isMobileNavOpen = window.innerWidth < 1024 ? this.isMobileNavOpen : false;
         });
 
         // Handle ESC key to close mobile nav
@@ -266,7 +264,7 @@
                                     x-on:click="goToPrevTab()"
                                     x-bind:disabled="!hasPrevTab()"
                                     class="p-1 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                                    aria-label="Previous tab"
+                                    aria-label="Previous tab">
                             
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
