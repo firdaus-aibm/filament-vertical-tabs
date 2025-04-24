@@ -1,95 +1,67 @@
 <div
-    x-data="{
-    activeTab: @js($getChildComponentContainer()->getComponents()[0]->getId()),
-    isMobileNavOpen: false,
-    tabs: [],
-    tabsMeta: [],
-    currentIndex: 0,
+        x-data="{
+        activeTab: @js($getChildComponentContainer()->getComponents()[0]->getId()),
+        isMobileNavOpen: false,
+        tabs: [],
+        currentIndex: 0,
 
-    init() {
-        // Initialize tab IDs
-        this.tabs = @js(collect($getChildComponentContainer()->getComponents())->pluck('id')->toArray());
+        init() {
+            // Get all tab IDs and store them
+            this.tabs = Array.from(this.$el.querySelectorAll('[data-tab-id]')).map(el => el.dataset.tabId);
 
-        // Fallback if no tabs found
-        if (!this.tabs.length) {
-            console.warn('No tabs found.');
-            return;
-        }
+            // Set initial index
+            this.currentIndex = this.tabs.indexOf(this.activeTab);
 
-        // Set the initial current index
-        this.currentIndex = this.tabs.indexOf(this.activeTab);
+            // Watch for activeTab changes to update currentIndex
+            this.$watch('activeTab', (tabId) => {
+                this.currentIndex = this.tabs.indexOf(tabId);
+            });
 
-        // Watch for changes to activeTab and update index
-        this.$watch('activeTab', (tabId) => {
-            this.currentIndex = this.tabs.indexOf(tabId);
-        });
+            // Watch for screen resize and close mobile nav on larger screens
+            this.$watch('$store.windowWidth', (width) => {
+                if (width >= 1024) this.isMobileNavOpen = false;
+            });
 
-        // Handle window resize for mobile nav behavior
-        window.addEventListener('resize', () => {
-            this.isMobileNavOpen = window.innerWidth < 1024 ? this.isMobileNavOpen : false;
-        });
+            // Add ESC key listener to close mobile nav
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && this.isMobileNavOpen) {
+                    this.isMobileNavOpen = false;
+                }
+            });
+        },
 
-        // Handle ESC key to close mobile nav
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.isMobileNavOpen) {
-                this.isMobileNavOpen = false;
+        goToNextTab() {
+            if (this.hasNextTab()) {
+                this.activeTab = this.tabs[this.currentIndex + 1];
             }
-        });
+        },
 
-        // Collect tab metadata from DOM
-        this.tabsMeta = [];
-        const tabElements = Array.from(this.$el.querySelectorAll('[data-tab-id]'));
-    
-        this.tabsMeta = tabElements.map(el => {
-            const iconEl = el.querySelector('[data-tab-icon]');
-            return {
-                id: el.dataset.tabId,
-                label: el.dataset.tabLabel || '',
-                iconHtml: iconEl ? iconEl.innerHTML : ''
-            };
-        });
+        goToPrevTab() {
+            if (this.hasPrevTab()) {
+                this.activeTab = this.tabs[this.currentIndex - 1];
+            }
+        },
 
-        console.log('Initialized tabsMeta:', this.tabsMeta); // Debugging
-    },
+        hasPrevTab() {
+            return this.currentIndex > 0;
+        },
 
-    goToNextTab() {
-        if (this.hasNextTab()) {
-            this.activeTab = this.tabs[this.currentIndex + 1];
+        hasNextTab() {
+            return this.currentIndex < this.tabs.length - 1;
         }
-    },
-
-    goToPrevTab() {
-        if (this.hasPrevTab()) {
-            this.activeTab = this.tabs[this.currentIndex - 1];
-        }
-    },
-
-    hasPrevTab() {
-        return this.currentIndex > 0;
-    },
-
-    hasNextTab() {
-        return this.currentIndex < this.tabs.length - 1;
-    }
-}"
-
+    }"
         x-init="init()"
-        class="filament-vertical-tabs relative">
+        class="filament-vertical-tabs relative"
+>
     <!-- Mobile Hamburger Menu Button (visible on small screens) -->
     <div class="sticky top-0 z-20 lg:hidden mb-6 flex justify-between items-center bg-white dark:bg-gray-800 rounded-xl shadow-sm p-3">
         <div class="flex items-center gap-2 font-medium">
-            <div x-show="tabsMeta.length > 0" x-cloak>
-                <template x-if="tabsMeta.length > 0">
-                    <div x-cloak>
-                        <template x-for="(tabItem, index) in tabsMeta" :key="index">
-                            <div x-show="tabItem.id === activeTab" class="flex items-center gap-2">
-                                <div x-html="tabItem.iconHtml" class="text-primary-500"></div>
-                                <span x-text="tabItem.label" class="text-gray-900 dark:text-white"></span>
-                            </div>
-                        </template>
-                    </div>
-                </template>
-            </div>
+            <template x-for="tab in $el.parentElement.querySelectorAll('[data-tab-id]')" :key="tab.dataset.tabId">
+                <div x-show="tab.dataset.tabId === activeTab" class="flex items-center gap-2" style="display: none;">
+                    <div x-html="tab.querySelector('[data-tab-icon]')?.innerHTML || ''" class="text-primary-500"></div>
+                    <span x-text="tab.dataset.tabLabel" class="text-gray-900 dark:text-white"></span>
+                </div>
+            </template>
         </div>
 
         <button
@@ -170,7 +142,7 @@
                 @foreach ($getChildComponentContainer()->getComponents() as $tab)
                     <button
                             type="button"
-                            x-on:click="if (activeTab !== '{{ $tab->getId() }}') activeTab = '{{ $tab->getId() }}'; isMobileNavOpen = false"
+                            x-on:click="activeTab = '{{ $tab->getId() }}'; isMobileNavOpen = false"
                             class="w-full text-left px-4 py-3 my-1 flex items-center gap-3 text-sm transition rounded-lg"
                             :class="{
                             'bg-primary-50 dark:bg-primary-500/20 text-primary-600 dark:text-primary-400 font-medium': activeTab === '{{ $tab->getId() }}',
@@ -208,7 +180,7 @@
                         @foreach ($getChildComponentContainer()->getComponents() as $tab)
                             <button
                                     type="button"
-                                    x-on:click="if (activeTab !== '{{ $tab->getId() }}') activeTab = '{{ $tab->getId() }}'"
+                                    x-on:click="activeTab = '{{ $tab->getId() }}'"
                                     class="flex items-center gap-3 px-4 py-3 mx-2 my-0.5 rounded-lg text-sm transition relative"
                                     data-tab-id="{{ $tab->getId() }}"
                                     data-tab-label="{{ $tab->getLabel() }}"
@@ -275,8 +247,8 @@
                                     x-on:click="goToPrevTab()"
                                     x-bind:disabled="!hasPrevTab()"
                                     class="p-1 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                                    aria-label="Previous tab">
-                            
+                                    aria-label="Previous tab"
+                            >
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                                 </svg>
@@ -295,7 +267,7 @@
                         </div>
                     </div>
 
-                    <div>
+                    <div x-ignore>
                         {{ $tab }}
                     </div>
                 </div>
