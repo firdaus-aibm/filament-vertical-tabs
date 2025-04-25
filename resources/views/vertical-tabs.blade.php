@@ -3,6 +3,7 @@
         activeTab: @js($getChildComponentContainer()->getComponents()[0]->getId()),
         isMobileNavOpen: false,
         tabs: [],
+        tab: null,
         currentIndex: 0,
 
         init() {
@@ -11,10 +12,12 @@
 
             // Set initial index
             this.currentIndex = this.tabs.indexOf(this.activeTab);
+            this.tab = this.activeTab;
 
             // Watch for activeTab changes to update currentIndex
             this.$watch('activeTab', (tabId) => {
                 this.currentIndex = this.tabs.indexOf(tabId);
+                this.tab = tabId;
             });
 
             // Watch for screen resize and close mobile nav on larger screens
@@ -267,7 +270,7 @@
                         </div>
                     </div>
 
-                    <div x-ignore>
+                    <div>
                         {{ $tab }}
                     </div>
                 </div>
