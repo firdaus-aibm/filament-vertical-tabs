@@ -1,6 +1,6 @@
 <div
     x-data="{
-        activeTab: @js($getChildComponentContainer()->getComponents()[0]->getId()),
+        activeTab: @js($getChildSchema()->getComponents()[0]->getId()),
         isMobileNavOpen: false,
         tabs: [],
         tab: null,
@@ -142,7 +142,7 @@
             </div>
 
             <nav class="p-4">
-                @foreach ($getChildComponentContainer()->getComponents() as $tab)
+                @foreach ($getChildSchema()->getComponents() as $tab)
                     <button
                         type="button"
                         x-on:click="activeTab = '{{ $tab->getId() }}'; isMobileNavOpen = false"
@@ -180,7 +180,7 @@
                         </h3>
                     @endif
                     <nav class="flex flex-col py-2">
-                        @foreach ($getChildComponentContainer()->getComponents() as $tab)
+                        @foreach ($getChildSchema()->getComponents() as $tab)
                             <button
                                 type="button"
                                 x-on:click="activeTab = '{{ $tab->getId() }}'"
@@ -224,7 +224,7 @@
 
         <!-- Content Area -->
         <div class="flex-1 min-w-0">
-            @foreach ($getChildComponentContainer()->getComponents() as $tab)
+            @foreach ($getChildSchema()->getComponents() as $tab)
                 <div
                     x-show="activeTab === '{{ $tab->getId() }}'"
                     x-transition:enter="transition ease-in-out duration-300"
