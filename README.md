@@ -51,7 +51,7 @@ Tabs::make('Settings')
     ]);
 ```
 
-### Filament v4
+### Filament v4 / v5
 
 ```php
 use Filament\Schemas\Components\Tabs;
@@ -90,11 +90,11 @@ This package adds a `vertical()` macro to Filament's Tabs component. When called
 2. Overrides the default Tabs view with a custom one that displays tabs vertically
 3. Adds mobile responsiveness with a sliding panel for navigation
 
-### Filament v4
+### Filament v4 / v5
 
-Filament v4 ships a native `vertical()` method. This package extends it with the `verticalMobile()` macro which calls the native `vertical()` and overrides the view to provide the mobile-responsive experience (hamburger menu, slide-out panel, prev/next buttons).
+Filament v4+ ships a native `vertical()` method. This package extends it with the `verticalMobile()` macro which calls the native `vertical()` and overrides the view to provide the mobile-responsive experience (hamburger menu, slide-out panel, prev/next buttons).
 
-> **Tailwind CSS v4 note:** If you use this package's custom Blade view with Filament v4, you must have a [custom theme](https://filamentphp.com/docs/4.x/appearance/themes) that adds a `@source` pointing to this package's `resources/views/` directory so that Tailwind picks up the utility classes used in the view.
+> **Tailwind CSS v4 note:** If you use this package's custom Blade view with Filament v4+, you must have a [custom theme](https://filamentphp.com/docs/5.x/appearance/themes) that adds a `@source` pointing to this package's `resources/views/` directory so that Tailwind picks up the utility classes used in the view.
 
 ## Contributing
 
