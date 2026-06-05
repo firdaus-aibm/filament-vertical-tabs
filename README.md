@@ -13,9 +13,9 @@ A Filament package that adds mobile-responsive vertical tabs functionality.
 
 ## Requirements
 
-- PHP 8.1+ (3.x) / PHP 8.2+ (4.x)
-- Laravel 11.0+ (3.x) / Laravel v11.28+ (4.x)
-- Filament v3.0+ (3.x) / Filament v4.0+ (4.x)
+- PHP 8.1+ (3.x) / PHP 8.2+ (4.x / 5.x)
+- Laravel 11.0+ (3.x) / Laravel v11.28+ (4.x / 5.x)
+- Filament v3.0+ (3.x) / Filament v4.0+ (4.x) / Filament v5.0+ (5.x)
 
 ## Installation
 
